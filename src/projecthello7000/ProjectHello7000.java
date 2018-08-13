@@ -6,10 +6,12 @@ import java.awt.Toolkit;
 import java.io.File;
 public class ProjectHello7000
 {
-    public static final String NAME = "Project Hello 1.0";
-    public static final String VERSION = "Version 1.0";
+    public static final String NAME = "Project Hello7000 2.0";
+    public static final String VERSION = "Version 2.0";
     public static final File FOLDER = new File(System.getProperty("user.home"), "Project Hello7000");
-    
+    public static int height;
+    public static int width;
+    public static int multiplier;
     public static String username;
     
     public static boolean homework = false;
@@ -39,27 +41,26 @@ public class ProjectHello7000
     public static final int BODY_TEXT_SIZE1 = 14;
     public static final int BODY_TEXT_SIZE2 = 14;
     
-    public static int multiplier;
-    public static int width;
-    public static int height;
-    
-    public static Color color1;
-    public static Color color2;
+    //Colors
+    public static Color mainColor;
+    public static Color secondaryColor;
     
     public static void main(String[] args)
     {
         widthAndHeight();
-        color1 = Color.blue;
-        color2 = Color.yellow;
+        mainColor = Color.blue;
+        secondaryColor = Color.yellow;
         new Start();
     }
     
     private static void widthAndHeight()
     {
+        //Get the screen resolution
         Toolkit t = Toolkit.getDefaultToolkit();
         Dimension screenResolution = t.getScreenSize();
         width = screenResolution.width;
         height = screenResolution.height;
+        //Set the value of the multiplier based on the screen resolution
         if(width >= 3840 && height >= 2160)
         {
             multiplier = 3;

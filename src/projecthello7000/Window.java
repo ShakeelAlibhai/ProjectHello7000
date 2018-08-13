@@ -15,7 +15,6 @@ import javax.swing.JTextField;
 public class Window
 {
     public static ArrayList<String> messages = new ArrayList<String>();
-    public static boolean maximized = false;    //Tracks whether the Talk window is set to maximized or not
     public static JFrame frame;
     public static JTextField inputField;
     public static String temp;
@@ -29,7 +28,7 @@ public class Window
     {
         inputField = new JTextField("");
         inputField.setFont(ProjectHello7000.bodyText2);
-        inputField.setForeground(ProjectHello7000.color1);
+        inputField.setForeground(ProjectHello7000.mainColor);
         setupFrame();
         if(messages.isEmpty())
         {
@@ -59,7 +58,7 @@ public class Window
             if(i % 2 == 0)
             {
                 messagesLabels[i].setBackground(Color.white);
-                messagesLabels[i].setForeground(ProjectHello7000.color1);
+                messagesLabels[i].setForeground(ProjectHello7000.mainColor);
             }
         }
         //Add the messages from the array list to the talk frame
@@ -94,10 +93,11 @@ public class Window
     private JMenuBar menuBar()
     {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(ProjectHello7000.color1);
+        menuBar.setBackground(ProjectHello7000.mainColor);
         menuBar.add(Components.standardButton("About", new AboutListener()));
         menuBar.add(Components.standardButton("Disclaimer", new DisclaimerListener()));
         menuBar.add(Components.standardButton("Clear Chat History", new ClearChatHistoryListener()));
+        menuBar.add(Components.standardButton("Tips", new TipsListener()));
         return menuBar;
     }
     
@@ -169,6 +169,31 @@ public class Window
         {
             temp = "Hmm . . . I'm not sure what the weather will be like.";
         }
+        else if(input.indexOf("what are you doing") >= 0 ||
+                input.indexOf("what r u doing") >= 0 ||
+                input.indexOf("what're you doing") >= 0 ||
+                input.indexOf("what're u doing") >= 0 ||
+                input.indexOf("what you doing") >= 0 ||
+                input.indexOf("what u doing") >= 0)
+        {
+            temp = "I'm talking to you! (I think...)";
+        }
+        else if(input.indexOf("what can you do") >= 0)
+        {
+            temp = "I can try to have a conversation with you, and maybe even help you with basic productivity tasks!";
+        }
+        else if(input.indexOf("+") >= 0)
+        {
+            temp = addition(input);
+        }
+        else if(input.indexOf("-") >= 0)
+        {
+            temp = subtraction(input);
+        }
+        else if(input.indexOf("capital") >= 0)
+        {
+            temp = capitals(input);
+        }
         else if((input.indexOf("date") >= 0 ||
                 input.indexOf("time") >= 0) &&
                 input.indexOf("tomorrow") <= 0)
@@ -191,6 +216,13 @@ public class Window
                 input.indexOf("you") >= 0)
         {
             temp = "I'm fine, thanks for asking.";
+        }
+        else if(input.indexOf("where are you") >= 0 ||
+                input.indexOf("where r u") >= 0 ||
+                input.indexOf("where you at") >= 0 ||
+                input.indexOf("where u at") >= 0)
+        {
+            temp = "I'm in your computer!";
         }
         else if(input.indexOf("question") >= 0 &&
                 input.indexOf("?") <= 0 &&
@@ -324,6 +356,21 @@ public class Window
         {
             temp = "That's a good question.";
         }
+        else if(input.indexOf("you") >= 0 &&
+                input.indexOf("bathroom") >= 0)
+        {
+            temp = "I'm a computer program; I don't have to use the bathroom!";
+        }
+        else if(input.indexOf("you") >= 0 &&
+                input.indexOf("restroom") >= 0)
+        {
+            temp = "I'm a computer program; I don't have to use the restroom!";
+        }
+        else if(input.indexOf("you") >= 0 &&
+                input.indexOf("washroom") >= 0)
+        {
+            temp = "I'm a computer program; I don't have to use the washroom!";
+        }
         else if(input.indexOf("good") >= 0 &&
                 ProjectHello7000.howAreYouTyped == false)
         {
@@ -415,7 +462,7 @@ public class Window
         }
         else if(input.indexOf("color") >= 0)
         {
-            temp = "My favorite colors are probably green and blue.";
+            temp = "My favorite colors are probably green and blue. But my theme colors are blue and yellow!";
         }
         else if(input.indexOf("orange") >= 0)
         {
@@ -718,15 +765,6 @@ public class Window
         }
     }
     
-    public class CloseListener implements ActionListener
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            maximized = false;
-            frame.dispose();
-        }
-    }
-    
     public static class AboutListener implements ActionListener
     {
         @Override
@@ -766,5 +804,422 @@ public class Window
                 ProjectHello7000.howAreYouDisplayed = false;
             }
         }
+    }
+    
+    public static class TipsListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            new Tips();
+        }
+    }
+    
+    //This method is called when the user enters a plus symbol, indicating they may want to perform addition.
+    //This method will attempt to find two numbers in their input and tries to add them together.
+    //Argument: The user's input
+    //Returns: A String to be displayed to the user, with one of three possible formats:
+    //1: If the user tried to add more than two numbers together, they will get a message saying that currently only two numbers can be added together.
+    //2: The two numbers from the input, along with their sum.
+    //3: A message saying that the input could not be properly parsed as an addition expression.
+    private String addition(String input)
+    {
+        try
+        {
+            int i = input.indexOf("+");
+            //Check to make sure there is only one plus sign, as the addition of more than two numbers is not currently supported
+            String inputAfterPlusSign = input.substring(i + 1);
+            if(inputAfterPlusSign.contains("+"))
+            {
+                temp = "Sorry, I can currently only add two numbers together at a time!";
+            }
+            //Go through the part of the input String before the plus sign. Stop when a number or a decimal point is reached.
+            //If the user entered a valid arithmetic expression, then, at the end, j should contain either an integer (the first digit of the first number to be added) or a decimal point.
+            int j = 0;
+            for(; j < i; j++)
+            {
+                //If the character at the current index is a decimal point, then consider this to be the beginning of the first number
+                if(input.charAt(j) == '.')
+                {
+                    break;
+                }
+                //If the character at the current index can be converted to an integer, then consider this to be the beginning of the first number
+                try
+                {
+                    int temp = Integer.parseInt(String.valueOf(input.charAt(j)));
+                    break;
+                }
+                //If the character at the current index is not a decimal point and cannot be converted to an integer, then check the next index (if there is one left before the plus sign)
+                catch(Exception e)
+                {
+                    continue;
+                }
+            }
+            double firstNumber, secondNumber;
+            if(input.charAt(i - 1) == ' ')  //If there is a space between the first number and the plus sign
+            {
+                firstNumber = Double.parseDouble(input.substring(j, i - 1));
+            }
+            else    //If there is no space between the first number and the plus sign
+            {
+                firstNumber = Double.parseDouble(input.substring(j, i));
+            }
+            //Go through the part of the input String after the plus sign. Stop when a character other than a number or a second decimal point is reached.
+            //If the user entered a valid arithmetic expression, then, at the end, j should contain either an integer (the first digit of the first number to be added) or a decimal point.
+            int secondNumberStart;
+            if(input.charAt(i + 1) == ' ')  //If there is a space between the plus sign and the second number
+            {
+                secondNumberStart = i + 2;
+            }
+            else    //If there is no space between the first number and the plus sign
+            {
+                secondNumberStart = i + 1;
+            }
+            j = secondNumberStart;
+            boolean firstDecimalPointFound = false;
+            for(; j < input.length(); j++)
+            {
+                if(input.charAt(j) == '.')
+                {
+                    //If this is the second decimal point, then consider the second number to be fully parsed
+                    if(firstDecimalPointFound)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        firstDecimalPointFound = true;
+                        continue;
+                    }
+                }
+                //If the character at the current index can be converted to an integer, check the next index (if there is one).
+                //Otherwise, consider the second number to be fully parsed.
+                try
+                {
+                    int temp = Integer.parseInt(String.valueOf(input.charAt(j)));
+                    continue;
+                }
+                catch(Exception e)
+                {
+                    break;
+                }
+            }
+            secondNumber = Double.parseDouble(input.substring(secondNumberStart, j));
+            String returnStr = firstNumber + " + " + secondNumber + " = " + (firstNumber + secondNumber);
+            return returnStr;
+        }
+        catch(Exception e)
+        {
+            return "Sorry, I couldn't properly parse your input as an addition expression!";
+        }
+    }
+    
+    //This method is called when the user enters a minus symbol, indicating they may want to perform subtraction.
+    //This method will attempt to find two numbers in their input and tries to subtract them.
+    //Argument: The user's input
+    //Returns: A String to be displayed to the user, with one of three possible formats:
+    //1: If the user tried to subtract more than two numbers, they will get a message saying that currently only two numbers can be subtracted.
+    //2: The two numbers from the input, along with their difference.
+    //3: A message saying that the input could not be properly parsed as an subtraction expression.
+    private String subtraction(String input)
+    {
+        try
+        {
+            int i = input.indexOf("-");
+            //Check to make sure there is only one minus sign, as the subtraction of more than two numbers is not currently supported
+            String inputAfterMinusSign = input.substring(i + 1);
+            if(inputAfterMinusSign.contains("-"))
+            {
+                temp = "Sorry, I can currently only subtract two numbers at a time!";
+            }
+            //Go through the part of the input String before the minus sign. Stop when a number or a decimal point is reached.
+            //If the user entered a valid arithmetic expression, then, at the end, j should contain either an integer (the first digit of the first number in the expression) or a decimal point.
+            int j = 0;
+            for(; j < i; j++)
+            {
+                //If the character at the current index is a decimal point, then consider this to be the beginning of the first number
+                if(input.charAt(j) == '.')
+                {
+                    break;
+                }
+                //If the character at the current index can be converted to an integer, then consider this to be the beginning of the first number
+                try
+                {
+                    int temp = Integer.parseInt(String.valueOf(input.charAt(j)));
+                    break;
+                }
+                //If the character at the current index is not a decimal point and cannot be converted to an integer, then check the next index (if there is one left before the plus sign)
+                catch(Exception e)
+                {
+                    continue;
+                }
+            }
+            double firstNumber, secondNumber;
+            if(input.charAt(i - 1) == ' ')  //If there is a space between the first number and the minus sign
+            {
+                firstNumber = Double.parseDouble(input.substring(j, i - 1));
+            }
+            else    //If there is no space between the first number and the plus sign
+            {
+                firstNumber = Double.parseDouble(input.substring(j, i));
+            }
+            //Go through the part of the input String after the plus sign. Stop when a character other than a number or a second decimal point is reached.
+            //If the user entered a valid arithmetic expression, then, at the end, j should contain either an integer (the first digit of the first number to in the expression) or a decimal point.
+            int secondNumberStart;
+            if(input.charAt(i + 1) == ' ')  //If there is a space between the minus sign and the second number
+            {
+                secondNumberStart = i + 2;
+            }
+            else    //If there is no space between the first number and the minus sign
+            {
+                secondNumberStart = i + 1;
+            }
+            j = secondNumberStart;
+            boolean firstDecimalPointFound = false;
+            for(; j < input.length(); j++)
+            {
+                if(input.charAt(j) == '.')
+                {
+                    //If this is the second decimal point, then consider the second number to be fully parsed
+                    if(firstDecimalPointFound)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        firstDecimalPointFound = true;
+                        continue;
+                    }
+                }
+                //If the character at the current index can be converted to an integer, check the next index (if there is one).
+                //Otherwise, consider the second number to be fully parsed.
+                try
+                {
+                    int temp = Integer.parseInt(String.valueOf(input.charAt(j)));
+                    continue;
+                }
+                catch(Exception e)
+                {
+                    break;
+                }
+            }
+            secondNumber = Double.parseDouble(input.substring(secondNumberStart, j));
+            String returnStr = firstNumber + " - " + secondNumber + " = " + (firstNumber - secondNumber);
+            return returnStr;
+        }
+        catch(Exception e)
+        {
+            return "Sorry, I couldn't properly parse your input as a subtraction expression!";
+        }
+    }
+    
+    private String capitals(String input)
+    {
+        String returnStr;
+        if(input.contains("alabama"))
+        {
+            returnStr = "The capital of Alabama is Montgomery.";
+        }
+        else if(input.contains("alaska"))
+        {
+            returnStr = "The capital of Alaska is Juneau.";
+        }
+        else if(input.contains("arizona"))
+        {
+            returnStr = "The capital of Arizona is Phoenix.";
+        }
+        else if(input.contains("arkansas"))
+        {
+            returnStr = "The capital of Arkansas is Little Rock.";
+        }
+        else if(input.contains("california"))
+        {
+            returnStr = "The capital of California is Sacramento.";
+        }
+        else if(input.contains("colorado"))
+        {
+            returnStr = "The capital of Colorado is Denver.";
+        }
+        else if(input.contains("connecticut"))
+        {
+            returnStr = "The capital of Connecticut is Hartford.";
+        }
+        else if(input.contains("delaware"))
+        {
+            returnStr = "The capital of Delaware is Dover.";
+        }
+        else if(input.contains("florida"))
+        {
+            returnStr = "The capital of Florida is Tallahassee.";
+        }
+        else if(input.contains("georgia"))
+        {
+            returnStr = "The capital of Georgia is Atlanta.";
+        }
+        else if(input.contains("hawaii"))
+        {
+            returnStr = "The capital of Hawaii is Honolulu.";
+        }
+        else if(input.contains("idaho"))
+        {
+            returnStr = "The capital of Idaho is Boise.";
+        }
+        else if(input.contains("illinois"))
+        {
+            returnStr = "The capital of Illinois is Springfield.";
+        }
+        else if(input.contains("indiana"))
+        {
+            returnStr = "The capital of Indiana is Indianapolis.";
+        }
+        else if(input.contains("iowa"))
+        {
+            returnStr = "The capital of Iowa is Des Moines.";
+        }
+        else if(input.contains("kansas"))
+        {
+            returnStr = "The capital of Kansas is Topeka.";
+        }
+        else if(input.contains("kentucky"))
+        {
+            returnStr = "The capital of Kentucky is Frankfort.";
+        }
+        else if(input.contains("louisiana"))
+        {
+            returnStr = "The capital of Louisiana is Baton Rouge.";
+        }
+        else if(input.contains("maine"))
+        {
+            returnStr = "The capital of Maine is Augusta.";
+        }
+        else if(input.contains("maryland"))
+        {
+            returnStr = "The capital of Maryland is Annapolis.";
+        }
+        else if(input.contains("massachusetts"))
+        {
+            returnStr = "The capital of Massachusetts is Boston.";
+        }
+        else if(input.contains("michigan"))
+        {
+            returnStr = "The capital of Michigan is Lansing.";
+        }
+        else if(input.contains("minnesota"))
+        {
+            returnStr = "The capital of Minnesota is Saint Paul.";
+        }
+        else if(input.contains("mississippi"))
+        {
+            returnStr = "The capital of Mississippi is Jackson.";
+        }
+        else if(input.contains("missouri"))
+        {
+            returnStr = "The capital of Missouri is Jefferson City.";
+        }
+        else if(input.contains("montana"))
+        {
+            returnStr = "The capital of Montana is Helena.";
+        }
+        else if(input.contains("nebraska"))
+        {
+            returnStr = "The capital of Nebraska is Lincoln.";
+        }
+        else if(input.contains("nevada"))
+        {
+            returnStr = "The capital of Nevada is Carson City.";
+        }
+        else if(input.contains("new hampshire"))
+        {
+            returnStr = "The capital of New Hampshire is Concord.";
+        }
+        else if(input.contains("new jersey"))
+        {
+            returnStr = "The capital of New Jersey is Trenton.";
+        }
+        else if(input.contains("new mexico"))
+        {
+            returnStr = "The capital of New Mexico is Santa Fe.";
+        }
+        else if(input.contains("new york"))
+        {
+            returnStr = "The capital of New York is Albany.";
+        }
+        else if(input.contains("north carolina"))
+        {
+            returnStr = "The capital of North Carolina is Raleigh.";
+        }
+        else if(input.contains("north dakota"))
+        {
+            returnStr = "The capital of North Dakota is Bismarck.";
+        }
+        else if(input.contains("ohio"))
+        {
+            returnStr = "The capital of Ohio is Columbus.";
+        }
+        else if(input.contains("oklahoma"))
+        {
+            returnStr = "The capital of Oklahoma is Oklahoma City.";
+        }
+        else if(input.contains("oregon"))
+        {
+            returnStr = "The capital of Oregon is Salem.";
+        }
+        else if(input.contains("pennsylvania"))
+        {
+            returnStr = "The capital of Pennsylvania is Harrisburg.";
+        }
+        else if(input.contains("rhode island"))
+        {
+            returnStr = "The capital of Rhode Island is Providence.";
+        }
+        else if(input.contains("south carolina"))
+        {
+            returnStr = "The capital of South Carolina is Columbia.";
+        }
+        else if(input.contains("south dakota"))
+        {
+            returnStr = "The capital of South Dakota is Pierre.";
+        }
+        else if(input.contains("tennessee"))
+        {
+            returnStr = "The capital of Tennessee is Nashville.";
+        }
+        else if(input.contains("texas"))
+        {
+            returnStr = "The capital of Texas is Austin.";
+        }
+        else if(input.contains("utah"))
+        {
+            returnStr = "The capital of Utah is Salt Lake City.";
+        }
+        else if(input.contains("vermont"))
+        {
+            returnStr = "The capital of Vermont is Montpelier.";
+        }
+        else if(input.contains("virginia"))
+        {
+            returnStr = "The capital of Virginia is Richmond.";
+        }
+        else if(input.contains("washington"))
+        {
+            returnStr = "The capital of Washington is Olympia.";
+        }
+        else if(input.contains("west virginia"))
+        {
+            returnStr = "The capital of West Virginia is Charleston.";
+        }
+        else if(input.contains("wisconsin"))
+        {
+            returnStr = "The capital of Wisconsin is Madison.";
+        }
+        else if(input.contains("wyoming"))
+        {
+            returnStr = "The capital of Wyoming is Cheyenne.";
+        }
+        else
+        {
+            returnStr = "Sorry, I couldn't recognize that!";
+        }
+        return returnStr;
     }
 }
