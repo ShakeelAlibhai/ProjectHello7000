@@ -6,8 +6,8 @@ import java.awt.Toolkit;
 import java.io.File;
 public class ProjectHello7000
 {
-    public static final String NAME = "Project Hello7000 2.0";
-    public static final String VERSION = "Version 2.0";
+    public static final String NAME = "Project Hello7000 2.0 Update 1";
+    public static final String VERSION = "Version 2.0.1";
     public static final File FOLDER = new File(System.getProperty("user.home"), "Project Hello7000");
     public static int height;
     public static int width;

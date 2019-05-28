@@ -1,6 +1,11 @@
 # Project Hello7000 Changelog
 
 ## Version 2.0.x
+### Version 2.0.1 (May 28, 2019)
+* Added support for the capitals of the five United States territories.
+* Updated the Disclaimer window.
+* Updated Tips.
+
 ### Version 2.0 (August 13, 2018)
 * Added a "Tips" window that can be launched via a button on the menu bar.
 * Added support for addition and subtraction (with some restrictions).

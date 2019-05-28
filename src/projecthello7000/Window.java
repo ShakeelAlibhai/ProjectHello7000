@@ -1016,6 +1016,8 @@ public class Window
     private String capitals(String input)
     {
         String returnStr;
+        
+        //United States - states
         if(input.contains("alabama"))
         {
             returnStr = "The capital of Alabama is Montgomery.";
@@ -1216,6 +1218,30 @@ public class Window
         {
             returnStr = "The capital of Wyoming is Cheyenne.";
         }
+        
+        //United States - territories
+        else if(input.contains("american samoa"))
+        {
+            returnStr = "The capital of American Samoa is Pago Pago.";
+        }
+        else if(input.contains("guam"))
+        {
+            returnStr = "The capital of Guam is Hagåtña.";
+        }
+        else if(input.contains("northern mariana islands"))
+        {
+            returnStr = "The capital of the Northern Mariana Islands is Saipan.";
+        }
+        else if(input.contains("puerto rico"))
+        {
+            returnStr = "The capital of Puerto Rico is San Juan.";
+        }
+        else if(input.contains("virgin islands"))
+        {
+            returnStr = "The capital of the United States Virgin Islands is Charlotte Amalie.";
+        }
+        
+        //Not recognized
         else
         {
             returnStr = "Sorry, I couldn't recognize that!";
